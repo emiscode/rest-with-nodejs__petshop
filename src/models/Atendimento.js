@@ -57,6 +57,28 @@ class Atendimento {
             else return res.status(400).json(err)
         })
     }
+
+    update(id, values, res) {
+        if (values.data) {
+            values.data = moment(values.data, 'DD/MM/YYYY').format('YYYY-MM-DD hh:mm:ss')
+        }
+
+        const sql = `UPDATE ${this.tableName} SET ? WHERE id = ?`
+
+        db.query(sql, [values, id], (err, data) => {
+            if (!err) this.listOne(id, res)
+            else return res.status(400).json(err)
+        })
+    }
+
+    delete(id, res) {
+        const sql = `DELETE FROM ${this.tableName} WHERE id = ?`
+
+        db.query(sql, [id], (err, data) => {
+            if (!err) res.status(200).send()
+            else return res.status(400).json(err)
+        })
+    }
 }
 
 module.exports = new Atendimento()
