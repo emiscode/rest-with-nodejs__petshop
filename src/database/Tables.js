@@ -2,6 +2,7 @@ class Tables {
     init(db) {
         this.db = db
         this.criarAtendimentos()
+        this.criarPets()
     }
 
     criarAtendimentos() {
@@ -16,6 +17,21 @@ class Tables {
             dataCriacao datetime NOT NULL,
             status varchar(20) NOT NULL, 
             observacoes text, PRIMARY KEY(id)
+        )`
+
+        this.db.query(sql, (err) => {
+            if (err) console.log(err)
+        })
+    }
+
+    criarPets() {
+        const tableName = 'pets'
+
+        const sql = `CREATE TABLE IF NOT EXISTS ${tableName} (
+            id int NOT NULL AUTO_INCREMENT, 
+            nome varchar(20) NOT NULL, 
+            imagem varchar(200), 
+            PRIMARY KEY(id)
         )`
 
         this.db.query(sql, (err) => {
