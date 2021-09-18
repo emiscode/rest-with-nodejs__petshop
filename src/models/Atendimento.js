@@ -1,3 +1,4 @@
+const axios = require('axios')
 const moment = require('moment')
 const db = require('../config/database')
 
@@ -52,9 +53,18 @@ class Atendimento {
     listOne(id, res) {
         const sql = `SELECT * FROM ${this.tableName} WHERE id = ${id}`
 
-        db.query(sql, (err, data) => {
-            if (!err) return res.status(200).json(data)
-            else return res.status(400).json(err)
+        db.query(sql, async (err, result) => {
+            const atendimento = result[0]
+            const cpf = atendimento.cliente
+
+            if (!err) {
+                const { data } = await axios.get(`http://localhost:8082/cpf/${cpf}`)
+
+                atendimento.cliente = data
+
+                return res.status(200).json(atendimento)
+
+            } else return res.status(400).json(err)
         })
     }
 
