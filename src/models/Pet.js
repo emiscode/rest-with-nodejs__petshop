@@ -1,6 +1,6 @@
 const moment = require('moment')
 const db = require('../config/database')
-const uploadFile = require('../files/uploadFile')
+const uploadFile = require('../services/files/uploadFile')
 
 class Pet {
 
