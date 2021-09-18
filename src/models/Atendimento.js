@@ -1,13 +1,14 @@
 const axios = require('axios')
 const moment = require('moment')
 const db = require('../config/database')
+const repository = require('../repositories/Atendimento')
 
 class Atendimento {
 
     constructor() {
         this.tableName = 'atendimentos'
     }
-    
+
     create(atendimento, res) {
         moment.locale('en')
         const dataCriacao = moment().format('YYYY-MM-DD hh:mm:ss')
@@ -15,7 +16,7 @@ class Atendimento {
         const isValidDate = moment(data).isSameOrAfter(dataCriacao);
 
         const validations = [
-            { 
+            {
                 name: 'date',
                 isValid: isValidDate,
                 message: 'Date should be same or after current date'
@@ -25,20 +26,16 @@ class Atendimento {
         const errors = validations.filter(param => !param.isValid)
 
         if (errors && errors.length > 0) {
-            return res.status(400).json(errors)
+            return new Promise((resolve, reject) => reject(errors))
         }
-        
-        const atendimentoComData = {...atendimento, dataCriacao, data}
 
-        const sql = `INSERT INTO ${this.tableName} set ?`
+        const atendimentoComData = { ...atendimento, dataCriacao, data }
 
-        db.query(sql, atendimentoComData, (err, data) => {
-            if (!err) {
-                const atendimentoCadastrado = {id: data.insertId, ...atendimentoComData} 
-                return res.status(201).json(atendimentoCadastrado)
-            }
-            else return res.status(400).json(err)
-        })
+        return repository.create(atendimentoComData)
+            .then((res) => {
+                const atendimentoCadastrado = { id: res.insertId, ...atendimentoComData }
+                return atendimentoCadastrado
+            })
     }
 
     listAll(res) {

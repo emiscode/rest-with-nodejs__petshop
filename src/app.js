@@ -1,6 +1,6 @@
 const appConfig = require('./config/appConfig')
 const db = require('./config/database')
-const tables = require('./database/Tables')
+const tables = require('./utils/database/Tables')
 
 db.connect((err) => {
     if (!err) {
