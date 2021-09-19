@@ -7,23 +7,37 @@ class Atendimento {
 
     constructor() {
         this.tableName = 'atendimentos'
+
+        this.isValidDate = ({ data, dataCriacao }) => moment(data).isSameOrAfter(dataCriacao);
+
+        this.validations = [
+            {
+                name: 'date',
+                isValid: this.isValidDate,
+                message: 'Date should be same or after current date'
+            }
+        ]
+
+        this.validate = (params) => {
+            return this.validations.filter(obj => { 
+                const { name } = obj
+                const param = params[name]
+
+                return !obj.isValid(param)
+            })
+        }
     }
 
     create(atendimento, res) {
         moment.locale('en')
         const dataCriacao = moment().format('YYYY-MM-DD hh:mm:ss')
         const data = moment(atendimento.data, 'DD/MM/YYYY').format('YYYY-MM-DD hh:mm:ss')
-        const isValidDate = moment(data).isSameOrAfter(dataCriacao);
+        
+        const params = {
+            date: { data, dataCriacao }
+        }
 
-        const validations = [
-            {
-                name: 'date',
-                isValid: isValidDate,
-                message: 'Date should be same or after current date'
-            }
-        ]
-
-        const errors = validations.filter(param => !param.isValid)
+        const errors = this.validate(params)
 
         if (errors && errors.length > 0) {
             return new Promise((resolve, reject) => reject(errors))
