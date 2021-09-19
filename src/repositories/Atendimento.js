@@ -7,7 +7,14 @@ class Atendimento {
 
     create(atendimento) {
         const sql = `INSERT INTO ${this.tableName} SET ?`
+
         return query(sql, atendimento)
+    }
+
+    listAll() {
+        const sql = `SELECT * FROM ${this.tableName}`
+
+        return query(sql)
     }
 }
 

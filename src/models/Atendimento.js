@@ -28,7 +28,7 @@ class Atendimento {
         }
     }
 
-    create(atendimento, res) {
+    create(atendimento) {
         moment.locale('en')
         const dataCriacao = moment().format('YYYY-MM-DD hh:mm:ss')
         const data = moment(atendimento.data, 'DD/MM/YYYY').format('YYYY-MM-DD hh:mm:ss')
@@ -52,13 +52,8 @@ class Atendimento {
             })
     }
 
-    listAll(res) {
-        const sql = `SELECT * FROM ${this.tableName}`
-
-        db.query(sql, (err, data) => {
-            if (!err) return res.status(200).json(data)
-            else return res.status(400).json(err)
-        })
+    listAll() {
+        return repository.listAll()
     }
 
     listOne(id, res) {
